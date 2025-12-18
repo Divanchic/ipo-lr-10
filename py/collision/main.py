@@ -37,11 +37,33 @@ def intersectionAreaRect(a):
         print('Прямоугольник не существует')
 
 def intersectionAreaMultiRect(a):
-    b=0
-    for i in (len(rectangles)/2):
-        b+=min(a)-max(i[0][0],i[1][0])
-    return 0
-
-for i in range(int(len(rectangles)/2)):
-    print(2**i)
+    # Обработка пустого списка
+    if not rectangles:
+        return 0
     
+    # Проверка корректности всех прямоугольников
+    for i, rect in enumerate(rectangles, 1):
+        if not isCorrectRec(rect):
+            raise RectCorrectError(i)  # i-й прямоугольник некорректен
+    
+    x_left_max = rectangles[0][0][0]    # Максимальная левая граница
+    y_bottom_max = rectangles[0][0][1]  # Максимальная нижняя граница
+    x_right_min = rectangles[0][1][0]   # Минимальная правая граница
+    y_top_min = rectangles[0][1][1]     # Минимальная верхняя граница
+    
+    # Обновление границ для всех остальных прямоугольников
+    for i in range(1, len(rectangles)):
+        rect = rectangles[i]
+        
+        x_left_max = max(x_left_max, rect[0][0])
+        y_bottom_max = max(y_bottom_max, rect[0][1])
+        x_right_min = min(x_right_min, rect[1][0])
+        y_top_min = min(y_top_min, rect[1][1])
+    
+    # Проверяю, существует ли общая область пересечения
+    if x_left_max < x_right_min and y_bottom_max < y_top_min:
+        width = x_right_min - x_left_max
+        height = y_top_min - y_bottom_max
+        return width * height
+    else:
+        return 0  # Нет общей области пересечения
